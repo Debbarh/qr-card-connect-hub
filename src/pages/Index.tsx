@@ -6,6 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { ProfileManager } from '@/components/ProfileManager';
 import { ProfileForm } from '@/components/ProfileForm';
 import { QRCodeDisplay } from '@/components/QRCodeDisplay';
+import { MobileNavigation } from '@/components/MobileNavigation';
+import { QRScanner } from '@/components/QRScanner';
+import { ContactsList } from '@/components/ContactsList';
 
 interface Profile {
   id: string;
@@ -19,6 +22,13 @@ interface Profile {
   type: 'personal' | 'professional';
   status: 'active' | 'inactive' | 'archived';
   qrData: string;
+}
+
+interface Contact {
+  id: string;
+  name: string;
+  phone?: string;
+  email?: string;
 }
 
 const Index = () => {
@@ -63,6 +73,7 @@ const Index = () => {
 
   const [showManager, setShowManager] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [currentView, setCurrentView] = useState<'home' | 'profiles' | 'contacts' | 'scanner'>('home');
 
   const activeProfile = profiles.find(p => p.status === 'active');
 
@@ -107,6 +118,26 @@ const Index = () => {
     }
   };
 
+  const handleNavigation = (view: 'home' | 'profiles' | 'contacts' | 'scanner') => {
+    setCurrentView(view);
+    setShowManager(false);
+    setShowForm(false);
+  };
+
+  const handleScanResult = (result: string) => {
+    console.log('QR Code scanné:', result);
+    // Ici vous pouvez traiter le résultat du scan
+    alert(`QR Code scanné: ${result}`);
+    setCurrentView('home');
+  };
+
+  const handleAddContact = (contact: Contact) => {
+    console.log('Contact ajouté:', contact);
+    // Ici vous pouvez traiter l'ajout du contact
+    alert(`Contact ${contact.name} ajouté !`);
+    setCurrentView('home');
+  };
+
   if (showForm) {
     return (
       <ProfileForm 
@@ -116,20 +147,41 @@ const Index = () => {
     );
   }
 
-  if (showManager) {
+  if (currentView === 'scanner') {
+    return (
+      <QRScanner 
+        onBack={() => setCurrentView('home')}
+        onScanResult={handleScanResult}
+      />
+    );
+  }
+
+  if (currentView === 'contacts') {
+    return (
+      <ContactsList 
+        onBack={() => setCurrentView('home')}
+        onAddContact={handleAddContact}
+      />
+    );
+  }
+
+  if (showManager || currentView === 'profiles') {
     return (
       <ProfileManager 
         profiles={profiles}
         onUpdateStatus={updateProfileStatus}
-        onBack={() => setShowManager(false)}
+        onBack={() => {
+          setShowManager(false);
+          setCurrentView('home');
+        }}
         onAddProfile={() => setShowForm(true)}
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-md mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pb-20">
+      <div className="max-w-md mx-auto space-y-6 p-4">
         {/* Header */}
         <div className="flex justify-between items-center pt-8">
           <h1 className="text-2xl font-bold text-gray-800">Ma Carte Digitale</h1>
@@ -249,6 +301,12 @@ const Index = () => {
           </Card>
         </div>
       </div>
+
+      {/* Navigation mobile */}
+      <MobileNavigation 
+        currentView={currentView}
+        onNavigate={handleNavigation}
+      />
     </div>
   );
 };
