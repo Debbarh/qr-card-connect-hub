@@ -140,42 +140,66 @@ const Index = () => {
 
   if (showForm) {
     return (
-      <ProfileForm 
-        onSave={addProfile}
-        onBack={() => setShowForm(false)}
-      />
+      <div className="pb-20">
+        <ProfileForm 
+          onSave={addProfile}
+          onBack={() => setShowForm(false)}
+        />
+        <MobileNavigation 
+          currentView={currentView}
+          onNavigate={handleNavigation}
+        />
+      </div>
     );
   }
 
   if (currentView === 'scanner') {
     return (
-      <QRScanner 
-        onBack={() => setCurrentView('home')}
-        onScanResult={handleScanResult}
-      />
+      <>
+        <QRScanner 
+          onBack={() => setCurrentView('home')}
+          onScanResult={handleScanResult}
+        />
+        <MobileNavigation 
+          currentView={currentView}
+          onNavigate={handleNavigation}
+        />
+      </>
     );
   }
 
   if (currentView === 'contacts') {
     return (
-      <ContactsList 
-        onBack={() => setCurrentView('home')}
-        onAddContact={handleAddContact}
-      />
+      <div className="pb-20">
+        <ContactsList 
+          onBack={() => setCurrentView('home')}
+          onAddContact={handleAddContact}
+        />
+        <MobileNavigation 
+          currentView={currentView}
+          onNavigate={handleNavigation}
+        />
+      </div>
     );
   }
 
   if (showManager || currentView === 'profiles') {
     return (
-      <ProfileManager 
-        profiles={profiles}
-        onUpdateStatus={updateProfileStatus}
-        onBack={() => {
-          setShowManager(false);
-          setCurrentView('home');
-        }}
-        onAddProfile={() => setShowForm(true)}
-      />
+      <div className="pb-20">
+        <ProfileManager 
+          profiles={profiles}
+          onUpdateStatus={updateProfileStatus}
+          onBack={() => {
+            setShowManager(false);
+            setCurrentView('home');
+          }}
+          onAddProfile={() => setShowForm(true)}
+        />
+        <MobileNavigation 
+          currentView={currentView}
+          onNavigate={handleNavigation}
+        />
+      </div>
     );
   }
 
