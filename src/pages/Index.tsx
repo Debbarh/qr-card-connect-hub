@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { QrCode, User, Building2, Settings, Archive, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ProfileManager } from '@/components/ProfileManager';
+import { ProfileForm } from '@/components/ProfileForm';
 import { QRCodeDisplay } from '@/components/QRCodeDisplay';
 
 interface Profile {
@@ -62,6 +62,7 @@ const Index = () => {
   ]);
 
   const [showManager, setShowManager] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   const activeProfile = profiles.find(p => p.status === 'active');
 
@@ -76,6 +77,16 @@ const Index = () => {
       }
       return profile;
     }));
+  };
+
+  const addProfile = (profileData: Omit<Profile, 'id'>) => {
+    const newProfile: Profile = {
+      ...profileData,
+      id: Date.now().toString()
+    };
+    
+    setProfiles(prev => [...prev, newProfile]);
+    setShowForm(false);
   };
 
   const getStatusColor = (status: string) => {
@@ -96,12 +107,22 @@ const Index = () => {
     }
   };
 
+  if (showForm) {
+    return (
+      <ProfileForm 
+        onSave={addProfile}
+        onBack={() => setShowForm(false)}
+      />
+    );
+  }
+
   if (showManager) {
     return (
       <ProfileManager 
         profiles={profiles}
         onUpdateStatus={updateProfileStatus}
         onBack={() => setShowManager(false)}
+        onAddProfile={() => setShowForm(true)}
       />
     );
   }

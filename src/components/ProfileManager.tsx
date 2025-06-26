@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ArrowLeft, Eye, EyeOff, Archive, Trash2, Plus, Building2, User, MoreVertical } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,12 +28,14 @@ interface ProfileManagerProps {
   profiles: Profile[];
   onUpdateStatus: (id: string, status: 'active' | 'inactive' | 'archived') => void;
   onBack: () => void;
+  onAddProfile?: () => void;
 }
 
 export const ProfileManager: React.FC<ProfileManagerProps> = ({ 
   profiles, 
   onUpdateStatus, 
-  onBack 
+  onBack,
+  onAddProfile
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -149,7 +150,10 @@ export const ProfileManager: React.FC<ProfileManagerProps> = ({
         </div>
 
         {/* Bouton d'ajout */}
-        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+        <Button 
+          onClick={onAddProfile}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+        >
           <Plus className="w-4 h-4 mr-2" />
           Ajouter un profil
         </Button>
